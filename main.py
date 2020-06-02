@@ -17,7 +17,7 @@ def make_params(my_dict):
 
 
 # Prints the most recent cash on hand given a committee ID
-# Takes optional other parameters specifying the form
+# Takes optional other parameters specifying which filing to grab from
 def print_cash_on_hand(committee_id, extra_params=None):
 
     if extra_params is None:
@@ -55,6 +55,7 @@ def query_for_committee():
         return response_data[int(choice)]['id']
 
 
+# This part can be ignored – I typically run this file directly when working
 if __name__ == "__main__":
 
     while True:

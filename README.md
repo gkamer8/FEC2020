@@ -1,6 +1,6 @@
 # FEC2020
 
-In working for a political campaign, it is sometimes advantageous to automate certain tasks relating to the FEC. Part of this is exploration of campaign data, like other candidates' cash on hand, or summarizing how other campaigns are raising money. This repository contains some ad-hoc functions for examining FEC data using their API.
+In working for a political campaign, it is sometimes advantageous to automate  tasks related to the FEC. These tasks may include exploring campaign data, like other candidates' cash on hand, or summarizing how other campaigns are raising money. This repository contains some ad-hoc functions for examining campaign finance data using the FEC's API.
 
 The functionality is all in main.py 
 
