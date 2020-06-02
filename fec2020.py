@@ -5,7 +5,8 @@ import json
 
 base_url = "https://api.open.fec.gov/v1/"
 
-api_key = "rcqremU3GbE0epC0132ZWY7ZXgfOCL7pD36Uspgh"  # gkmr1999@gmail.com
+# My API key 
+api_key = "rcqremU3GbE0epC0132ZWY7ZXgfOCL7pD36Uspgh"
 
 
 # Helper function for adding parameters to an API request
@@ -26,7 +27,12 @@ def print_cash_on_hand(committee_id, extra_params=None):
     url = base_url + "committee/" + committee_id + "/reports"
     page_string = requests.get(url + params).content.decode("utf-8")
 
-    data = json.loads(page_string)['results'][0]  # gets most recent value, whatever that is (hopefully it's right!)
+    try:
+        data = json.loads(page_string)['results'][0]  # gets most recent value, whatever that is (hopefully it's right!)
+    except IndexError:
+        print("No results found!")
+        return 1
+
     cash_on_hand = data['cash_on_hand_end_period']
 
     cash_on_hand = round(cash_on_hand)
@@ -44,7 +50,7 @@ def query_for_committee():
     response_data = json.loads(response)['results']
 
     for i in range(len(response_data)):
-        if response_data[i]['is_active']:
+        if response_data[i]['is_active']:  # Only shows active committees
             print(str(i) + ": " + response_data[i]['name'])
 
     choice = input("\nChoose committee ('q' for do-over): ")

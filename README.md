@@ -2,7 +2,7 @@
 
 In working for a political campaign, it is sometimes advantageous to automate  tasks related to the FEC. These tasks may include exploring campaign data, like other candidates' cash on hand, or summarizing how other campaigns are raising money. This repository contains some ad-hoc functions for examining campaign finance data using the FEC's API.
 
-The functionality is all in main.py 
+The functionality is all in fec2020.py 
 
 ## Finding a Committee ID
 
