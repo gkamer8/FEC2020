@@ -11,3 +11,7 @@ The FEC API is easier to use if you know the committee ID for a candidate's camp
 ## Getting Cash on Hand
 
 The print_cash_on_hand function takes in a committee ID and prints the most recent cash on hand value for the committee. It also takes optional extra paramters (extra_params) to add to the filing query – say, if you want a filing only if it's from a particular quarter.
+
+## Reviewing Contributions and Disbursements
+
+The print_filing_summary function allows for viewing a summary of financial documents like quarterlies and pre-primaries. They give a link to the documents and print out contribution, disbursement, and cash on hand figures. Using the optional paramter as a store for a filename, you can write the total contributions and disbursements of the viewed file(s) straight to a CSV, adding to the previous lines.

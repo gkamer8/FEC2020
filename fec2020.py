@@ -50,30 +50,60 @@ def print_cash_on_hand(committee_id, extra_params=None):
 
 
 # Like print cash on hand but prints a larger summary of the filing
-def print_filing_summary(committee_id, extra_params=None):
+# Handles multiple filings and combines contributions and disbursements at end
+# Optional write paramters stores a filename to give the option of writing the total contributions/disbursements to
+def print_filing_summary(committee_id, extra_params=None, write_option=None):
     data = get_committee_reports(committee_id, extra_params=extra_params)
 
     if data is None:
         print("No filings found.")
     else:
+        total_cont = 0
+        total_disb = 0
 
-        first = data[0]  # Goes for the first filing - hope it's right!
+        for first in data:
+            print("\n")
+            try:
+                cash_on_hand = round(first['cash_on_hand_end_period'])
+                contributions = round(first['total_contributions_period'])
+                spending = round(first['total_disbursements_period'])
 
-        cash_on_hand = round(first['cash_on_hand_end_period'])
-        contributions = round(first['total_contributions_period'])
-        spending = round(first['total_disbursements_period'])
+                total_cont += int(contributions)
+                total_disb += int(spending)
 
-        # For checking that it's the right thing
-        desc = first['document_description']
-        year = first['report_year']
-        html_url = first['html_url']
+                # For checking that it's the right thing
+                desc = first['document_description']
+                year = first['report_year']
+                html_url = first['html_url']
 
-        print("Doc: " + desc)
-        print("Year: " + str(year))
-        print("URL: " + html_url + "\n")
-        print('Contributions: $' + '{:,}'.format(contributions))
-        print('Disbursements: $' + '{:,}'.format(spending))
-        print('Cash on hand: $' + '{:,}'.format(cash_on_hand))
+                print("Doc: " + desc)
+                print("Year: " + str(year))
+                print("URL: " + html_url + "\n")
+                print('Contributions: $' + '{:,}'.format(contributions))
+                print('Disbursements: $' + '{:,}'.format(spending))
+                print('Cash on hand: $' + '{:,}'.format(cash_on_hand))
+            except KeyError:
+                desc = first['document_description']
+                year = first['report_year']
+                html_url = first['html_url']
+                print("<Does not have contributions or disbursements")
+        
+        print("\nTotals")
+        print('Contributions: $' + '{:,}'.format(total_cont))
+        print('Disbursements: $' + '{:,}'.format(total_disb))
+
+        if write_option is not None:
+            write = input("Write? (w/n): ")
+            if write == 'w':
+                fhand = open(write_option, "r")
+                old = fhand.read()
+                fhand.close()
+
+                fhand = open("guns.csv", "w")
+                # Uses committee name from first filing, whatever that is
+                new_write = str(data[0]['committee_name']).replace(",", "") + ", " + str(total_cont) + ", " + str(total_disb) + "\n"
+                fhand.write(old + new_write)
+                fhand.close()
 
 
 
@@ -106,7 +136,6 @@ if __name__ == "__main__":
         params = {
             'year': '2020',
             'is_amended': 'False',
-            'report_type': 'Q1'
         }
 
         print_filing_summary(query_for_committee(), extra_params=params)
