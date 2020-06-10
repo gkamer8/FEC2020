@@ -23,12 +23,12 @@ def get_committee_reports(committee_id, extra_params=None):
     if extra_params is None:
         extra_params = dict()
     params = make_params(extra_params)
-    url = base_url + "committee/" + committee_id + "/reports"
-    page_string = requests.get(url + params).content.decode("utf-8")
+    url = base_url + "committee/" + committee_id + "/reports" + params
+    page_string = requests.get(url).content.decode("utf-8")
 
-    try:
-        data = json.loads(page_string)['results']
-    except IndexError:
+    data = json.loads(page_string)['results']
+
+    if len(data) == 0:
         return None
 
     return data
@@ -47,6 +47,34 @@ def print_cash_on_hand(committee_id, extra_params=None):
         cash_on_hand = round(cash_on_hand)  # Rounds to nearest dollar
 
         print('Cash: $' + '{:,}'.format(cash_on_hand))
+
+
+# Like print cash on hand but prints a larger summary of the filing
+def print_filing_summary(committee_id, extra_params=None):
+    data = get_committee_reports(committee_id, extra_params=extra_params)
+
+    if data is None:
+        print("No filings found.")
+    else:
+
+        first = data[0]  # Goes for the first filing - hope it's right!
+
+        cash_on_hand = round(first['cash_on_hand_end_period'])
+        contributions = round(first['total_contributions_period'])
+        spending = round(first['total_disbursements_period'])
+
+        # For checking that it's the right thing
+        desc = first['document_description']
+        year = first['report_year']
+        html_url = first['html_url']
+
+        print("Doc: " + desc)
+        print("Year: " + str(year))
+        print("URL: " + html_url + "\n")
+        print('Contributions: $' + '{:,}'.format(contributions))
+        print('Disbursements: $' + '{:,}'.format(spending))
+        print('Cash on hand: $' + '{:,}'.format(cash_on_hand))
+
 
 
 # Interactive searching for a committee, returns committee ID
@@ -75,7 +103,13 @@ if __name__ == "__main__":
 
     while True:
 
-        print_cash_on_hand(query_for_committee(), extra_params={})
+        params = {
+            'year': '2020',
+            'is_amended': 'False',
+            'report_type': 'Q1'
+        }
+
+        print_filing_summary(query_for_committee(), extra_params=params)
 
         stop = input("Stop? (y for exit): ")
 
