@@ -95,13 +95,17 @@ def print_filing_summary(committee_id, extra_params=None, write_option=None):
         if write_option is not None:
             write = input("Write? (w/n): ")
             if write == 'w':
-                fhand = open(write_option, "r")
-                old = fhand.read()
-                fhand.close()
+                try: 
+                    fhand = open(write_option, "r")
+                    old = fhand.read()
+                    fhand.close()
+                except FileNotFoundError:
+                    old = ""
+                    pass
 
-                fhand = open("guns.csv", "w")
+                fhand = open(write_option, "w")
                 # Uses committee name from first filing, whatever that is
-                new_write = str(data[0]['committee_name']).replace(",", "") + ", " + str(total_cont) + ", " + str(total_disb) + "\n"
+                new_write = str(data[0]['committee_name']).replace(",", "") + "," + str(total_cont) + "," + str(total_disb) + "\n"
                 fhand.write(old + new_write)
                 fhand.close()
 
@@ -138,12 +142,13 @@ if __name__ == "__main__":
             'is_amended': 'False',
         }
 
-        print_filing_summary(query_for_committee(), extra_params=params)
+        print_filing_summary(query_for_committee(), extra_params=params, write_option="guns2.csv")
 
         stop = input("Stop? (y for exit): ")
 
         if stop == 'y':
             break
+    
 
 
 
