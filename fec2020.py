@@ -9,10 +9,11 @@ base_url = "https://api.open.fec.gov/v1/"
 api_key = "rcqremU3GbE0epC0132ZWY7ZXgfOCL7pD36Uspgh"
 
 # Helper function for adding parameters to an API request
-def make_params(my_dict):
+# Params are lists of tuples
+def make_params(my_list):
     p_string = "?api_key=" + api_key
-    for p in my_dict:
-        p_string += "&" + p + "=" + my_dict[p]
+    for p in my_list:
+        p_string += "&" + p[0] + "=" + p[1]
     return p_string
 
 
@@ -21,9 +22,10 @@ def make_params(my_dict):
 def get_committee_reports(committee_id, extra_params=None):
 
     if extra_params is None:
-        extra_params = dict()
+        extra_params = list()
     params = make_params(extra_params)
     url = base_url + "committee/" + committee_id + "/reports" + params
+
     page_string = requests.get(url).content.decode("utf-8")
 
     data = json.loads(page_string)['results']
@@ -117,7 +119,7 @@ def query_for_committee():
     url = base_url + "names/committees/"
 
     q = input("Query for committee: ")
-    response = requests.get(url + make_params({'q': q})).content.decode("utf-8")
+    response = requests.get(url + make_params([('q', q)])).content.decode("utf-8")
     response_data = json.loads(response)['results']
 
     for i in range(len(response_data)):
@@ -137,12 +139,15 @@ if __name__ == "__main__":
 
     while True:
 
-        params = {
-            'year': '2020',
-            'is_amended': 'False',
-        }
+        # Params come from https://api.open.fec.gov/developers/#/financial/get_committee__committee_id__reports_
+        params = [
+            ('year', '2020'),
+            ('is_amended', 'False'),
+            ('report_type', 'Q2'),
+            ('report_type', '12P')
+        ]
 
-        print_filing_summary(query_for_committee(), extra_params=params, write_option="guns2.csv")
+        print_filing_summary(query_for_committee(), extra_params=params, write_option="july.csv")
 
         stop = input("Stop? (y for exit): ")
 
